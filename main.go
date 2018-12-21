@@ -44,5 +44,6 @@ func main() {
 	})
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./public/build"))))
-	log.Fatal(http.ListenAndServe(":5000", router))
+	prt := fmt.Sprintf(":%v", port)
+	log.Fatal(http.ListenAndServe(prt, router))
 }
