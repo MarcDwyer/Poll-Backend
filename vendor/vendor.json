@@ -3,23 +3,23 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "github.com/joho/godotenv"
+			"path": "../../../github.com/joho/godotenv"
 		},
 		{
-			"path": "github.com/gorilla/mux"
+			"path": "../../../github.com/gorilla/mux"
 		},
 		{
-			"path": "github.com/joho/godotenv"
+			"path": "../../../github.com/joho/godotenv"
 		},
 		{
-			"path": "github.com/gorilla/websocket"
+			"path": "../../../github.com/gorilla/websocket"
 		},
 		{
-			"path": "gopkg.in/mgo.v2"
+			"path": "../../../gopkg.in/mgo.v2"
 		},
 		{
-			"path": "gopkg.in/mgo.v2/bson"
+			"path": "../../../gopkg.in/mgo.v2/bson"
 		}
 	],
-	"rootPath": "github.com/heroku/go-getting-started"
+	"rootPath": "../../backend"
 }
