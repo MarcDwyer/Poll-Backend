@@ -3,23 +3,23 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "src/github.com/github.com/joho/godotenv"
+			"path": "github.com/github.com/joho/godotenv"
 		},
 		{
-			"path": "src/github.com/github.com/gorilla/mux"
+			"path": "github.com/github.com/gorilla/mux"
 		},
 		{
-			"path": "src/github.com/github.com/joho/godotenv"
+			"path": "github.com/github.com/joho/godotenv"
 		},
 		{
-			"path": "src/github.com/github.com/gorilla/websocket"
+			"path": "github.com/github.com/gorilla/websocket"
 		},
 		{
-			"path": "src/github.com/gopkg.in/mgo.v2"
+			"path": "github.com/gopkg.in/mgo.v2"
 		},
 		{
-			"path": "src/github.com/gopkg.in/mgo.v2/bson"
+			"path": "github.com/gopkg.in/mgo.v2/bson"
 		}
 	],
-	"rootPath": "src/github.com/MarcDwyer/poll/backend"
+	"rootPath": "github.com/MarcDwyer/poll/backend"
 }
