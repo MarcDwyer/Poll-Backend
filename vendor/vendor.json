@@ -1,25 +1,5 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [
-		{
-			"path": "github.com/github.com/joho/godotenv"
-		},
-		{
-			"path": "github.com/github.com/gorilla/mux"
-		},
-		{
-			"path": "github.com/github.com/joho/godotenv"
-		},
-		{
-			"path": "github.com/github.com/gorilla/websocket"
-		},
-		{
-			"path": "github.com/gopkg.in/mgo.v2"
-		},
-		{
-			"path": "github.com/gopkg.in/mgo.v2/bson"
-		}
-	],
 	"rootPath": "github.com/MarcDwyer/poll/backend"
 }
