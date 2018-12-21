@@ -68,7 +68,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		result, _ := json.Marshal(rec)
+		result, _ := json.Marshal(*rec)
 		w.Write(result)
 		return
 	case "/api/update":
