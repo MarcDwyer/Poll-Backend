@@ -1,5 +1,6 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"rootPath": "github.com/MarcDwyer/poll/backend"
+	"rootPath": "github.com/MarcDwyer/poll/backend",
+	"heroku.goVersion": "go1.11.2 "
 }
