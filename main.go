@@ -13,6 +13,7 @@ import (
 )
 
 var mkey string
+var port string
 
 func init() {
 	fmt.Println(runtime.NumCPU())
@@ -21,7 +22,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	*ky = os.Getenv("MONGODB")
+	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
 }
 
 func main() {
@@ -45,5 +46,5 @@ func main() {
 	})
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./public/build"))))
-	log.Fatal(http.ListenAndServe(":5000", router))
+	log.Fatal(http.ListenAndServe(port, router))
 }
