@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -46,5 +45,6 @@ func main() {
 
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./public/build"))))
 	prt := fmt.Sprintf(":%v", port)
-	log.Fatal(http.ListenAndServe(prt, router))
+	// log.Fatal(http.ListenAndServe(prt, router))
+	http.ListenAndServeTLS(prt, "", "121212asda", router)
 }
