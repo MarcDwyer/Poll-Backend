@@ -36,7 +36,6 @@ func main() {
 	router.HandleFunc("/api/update", Api)
 
 	router.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("balls")
 		Socketme(hub, w, r)
 	})
 

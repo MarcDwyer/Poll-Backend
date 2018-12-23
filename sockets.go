@@ -122,7 +122,6 @@ func (c *Client) writePump() {
 }
 
 func Socketme(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hello")
 	//	payload := new(Payload)
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
