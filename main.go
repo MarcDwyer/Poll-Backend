@@ -8,7 +8,6 @@ import (
 	"runtime"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
 
 var mkey string
