@@ -15,12 +15,6 @@
 			"revisionTime": "2018-12-06T07:02:39Z"
 		},
 		{
-			"checksumSHA1": "Cg7/HJQxWq9AWi8VEkPXSpFWqSo=",
-			"path": "github.com/joho/godotenv",
-			"revision": "69ed1d913aa885da390dd6de9febf063d101b097",
-			"revisionTime": "2018-11-20T19:47:48Z"
-		},
-		{
 			"checksumSHA1": "QS15F7XdFG6tSDF3LfAZJTEgbK8=",
 			"path": "gopkg.in/mgo.v2",
 			"revision": "9856a29383ce1c59f308dd1cf0363a79b5bef6b5",
