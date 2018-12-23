@@ -17,10 +17,10 @@ var port string
 func init() {
 	fmt.Println(runtime.NumCPU())
 	ky := &mkey
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	//err := godotenv.Load()
+	//if err != nil {
+//		log.Fatal("Error loading .env file")
+//	}
 	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
 }
 
