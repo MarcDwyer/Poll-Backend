@@ -12,6 +12,8 @@ import (
 
 var mkey string
 var port string
+var reSite string
+var reSecret string
 
 func init() {
 	fmt.Println(runtime.NumCPU())
@@ -21,6 +23,7 @@ func init() {
 	//		log.Fatal("Error loading .env file")
 	//	}
 	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
+	reSite, reSecret = os.Getenv("RESITE"), os.Getenv("RESECRET")
 }
 
 func main() {
@@ -33,7 +36,7 @@ func main() {
 	router.HandleFunc("/api/create", Api)
 	router.HandleFunc("/api/getpoll", Api)
 	router.HandleFunc("/api/update", Api)
-
+	router.HandleFunc("/auth", Auth)
 	router.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
 		Socketme(hub, w, r)
 	})
