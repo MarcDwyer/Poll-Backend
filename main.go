@@ -8,6 +8,7 @@ import (
 	"runtime"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 var mkey string
@@ -18,20 +19,18 @@ var reSecret string
 func init() {
 	fmt.Println(runtime.NumCPU())
 	ky := &mkey
-	//	err := godotenv.Load()
-	//	if err != nil {
-	//		log.Fatal("Error loading .env file")
-	//	}
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
 	reSite, reSecret = os.Getenv("RESITE"), os.Getenv("RESECRET")
 }
 
 func main() {
 	fmt.Println("server running...")
-
 	hub := newHub()
 	go hub.run()
-
 	router := mux.NewRouter()
 	router.HandleFunc("/api/create", Api)
 	router.HandleFunc("/api/getpoll", Api)

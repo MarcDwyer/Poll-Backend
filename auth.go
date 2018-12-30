@@ -20,7 +20,6 @@ type Result struct {
 }
 
 func Auth(w http.ResponseWriter, r *http.Request) {
-	// https://www.google.com/recaptcha/api/siteverify
 	var str string
 	json.NewDecoder(r.Body).Decode(&str)
 	url := fmt.Sprintf("https://www.google.com/recaptcha/api/siteverify?secret=%v&response=%v", reSecret, str)
@@ -29,10 +28,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	defer resp.Body.Close()
-	//	body, err := ioutil.ReadAll(resp.Body)
-	//	if err != nil {
-	//		fmt.Println(err)
-	//	}
+
 	var result Result
 	json.NewDecoder(resp.Body).Decode(&result)
 	writer, _ := json.Marshal(result)

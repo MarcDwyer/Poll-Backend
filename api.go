@@ -12,6 +12,7 @@ import (
 type Poll struct {
 	Id     bson.ObjectId `bson:"_id"`
 	Title  string        `bson:"title,omitempty"`
+	Ip     []string      `bson:"ip"`
 	Quest0 *Question     `bson:"quest0,omitempty"`
 	Quest1 *Question     `bson:"quest1,omitempty"`
 	Quest2 *Question     `bson:"quest2,omitempty"`
@@ -21,9 +22,11 @@ type Poll struct {
 type Question struct {
 	Count    *int    `bson:"count,omitempty"`
 	Question *string `bson:"question,omitempty"`
+	Ip       string  `bson:"ip,omitempty"`
 }
 type ReceivedPoll struct {
 	Id     bson.ObjectId `bson:"_id"`
+	Ip     []string      `json:"ip,omitempty"`
 	Title  string        `json:"title,omitempty"`
 	Quest0 *ReceivedQ    `json:"quest0,omitempty"`
 	Quest1 *ReceivedQ    `json:"quest1,omitempty"`
@@ -38,6 +41,7 @@ type ReceivedQ struct {
 type UpdatePoll struct {
 	Id       bson.ObjectId `json:"_id"`
 	Question string        `json:"question"`
+	Ip       string
 }
 
 func Api(w http.ResponseWriter, r *http.Request) {
@@ -68,18 +72,29 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		for _, v := range rec.Ip {
+			fmt.Println("ball", v)
+			if v == r.RemoteAddr {
+				fmt.Println(v)
+				return
+			}
+		}
 		result, _ := json.Marshal(*rec)
 		w.Write(result)
 		return
 	case "/api/update":
-		upd := &UpdatePoll{}
+		upd := &UpdatePoll{Ip: r.RemoteAddr}
 		json.NewDecoder(r.Body).Decode(&upd)
+		fmt.Println(upd)
 		str := fmt.Sprintf("%v.count", upd.Question)
 		change := bson.M{"$inc": bson.M{str: 1}}
 		err := c.UpdateId(upd.Id, change)
 		if err != nil {
 			fmt.Println(err)
 		}
+		str = fmt.Sprintf("%v.ip", upd.Question)
+		pusher := bson.M{"$push": bson.M{"ip": upd.Ip}}
+		err = c.UpdateId(upd.Id, pusher)
 		return
 	}
 }
