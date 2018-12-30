@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -26,7 +27,6 @@ type Question struct {
 }
 type ReceivedPoll struct {
 	Id     bson.ObjectId `bson:"_id"`
-	Ip     []string      `json:"ip,omitempty"`
 	Title  string        `json:"title,omitempty"`
 	Quest0 *ReceivedQ    `json:"quest0,omitempty"`
 	Quest1 *ReceivedQ    `json:"quest1,omitempty"`
@@ -43,6 +43,9 @@ type UpdatePoll struct {
 	Question string        `json:"question"`
 	Ip       string
 }
+type Ipchecker struct {
+	Status bool `json:"status"`
+}
 
 func Api(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
@@ -52,6 +55,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 	}
 	defer session.Close()
 	c := session.DB("abase").C("polls")
+
 	switch r.URL.String() {
 	case "/api/create":
 		poll := &Poll{}
@@ -72,27 +76,41 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		for _, v := range rec.Ip {
-			fmt.Println("ball", v)
-			if v == r.RemoteAddr {
-				fmt.Println(v)
-				return
-			}
-		}
 		result, _ := json.Marshal(*rec)
 		w.Write(result)
 		return
 	case "/api/update":
-		upd := &UpdatePoll{Ip: r.RemoteAddr}
+		s := strings.Split(r.RemoteAddr, ":")
+		upd := &UpdatePoll{Ip: s[0]}
 		json.NewDecoder(r.Body).Decode(&upd)
-		fmt.Println(upd)
+
+		var ips struct {
+			Ip []string `bson:"ip"`
+		}
+		err := c.FindId(upd.Id).Select(bson.M{"ip": 1}).One(&ips)
+
+		checker := Ipchecker{false}
+
+		for _, v := range ips.Ip {
+			if v == s[0] {
+				checker.Status = true
+				break
+			}
+		}
+		rz, _ := json.Marshal(checker)
+		w.Write(rz)
+
+		if checker.Status {
+			return
+		}
+
 		str := fmt.Sprintf("%v.count", upd.Question)
 		change := bson.M{"$inc": bson.M{str: 1}}
-		err := c.UpdateId(upd.Id, change)
+		err = c.UpdateId(upd.Id, change)
 		if err != nil {
 			fmt.Println(err)
 		}
-		str = fmt.Sprintf("%v.ip", upd.Question)
+
 		pusher := bson.M{"$push": bson.M{"ip": upd.Ip}}
 		err = c.UpdateId(upd.Id, pusher)
 		return
