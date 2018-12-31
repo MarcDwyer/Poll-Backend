@@ -39,8 +39,8 @@ func main() {
 		Socketme(hub, w, r)
 	})
 
-	home := router.PathPrefix("/poll/").Subrouter()
-	home.HandleFunc("/{rest:.*}", func(w http.ResponseWriter, r *http.Request) {
+	poll := router.PathPrefix("/poll/").Subrouter()
+	poll.HandleFunc("/{rest:.*}", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./public/build/index.html")
 	})
 

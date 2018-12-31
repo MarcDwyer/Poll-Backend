@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -40,7 +42,7 @@ type ReceivedQ struct {
 type UpdatePoll struct {
 	Id       bson.ObjectId `json:"_id"`
 	Question string        `json:"question"`
-	Ip       string
+	Ip       int
 }
 type Ipchecker struct {
 	Status bool `json:"status"`
@@ -79,15 +81,17 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		w.Write(result)
 		return
 	case "/api/update":
-		ip := r.Header.Get("X-Forwarded-For")
-		if ip == "" {
+		strip := r.Header.Get("X-Forwarded-For")
+		if strip == "" {
 			return
 		}
+		nw := strings.Replace(strip, ".", "", -1)
+		ip, _ := strconv.Atoi(nw)
 		upd := &UpdatePoll{Ip: ip}
 		json.NewDecoder(r.Body).Decode(&upd)
 
 		var ips struct {
-			Ip []string `bson:"ip"`
+			Ip []int `bson:"ip"`
 		}
 		err := c.FindId(upd.Id).Select(bson.M{"ip": 1}).One(&ips)
 
@@ -107,7 +111,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		rz, _ := json.Marshal(checker)
 		w.Write(rz)
 
-		if checker.Status == true {
+		if checker.Status {
 			return
 		}
 
