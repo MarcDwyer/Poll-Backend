@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"net/http"
 
 	mgo "gopkg.in/mgo.v2"
@@ -80,8 +79,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		w.Write(result)
 		return
 	case "/api/update":
-
-		ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+		ip := r.Header.Get("X-Forwarded-For")
 
 		upd := &UpdatePoll{Ip: ip}
 		json.NewDecoder(r.Body).Decode(&upd)
