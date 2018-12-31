@@ -109,6 +109,9 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		rz, _ := json.Marshal(checker)
 		w.Write(rz)
 
+		if checker.Status == true {
+			return
+		}
 		str := fmt.Sprintf("%v.count", upd.Question)
 		change := bson.M{"$inc": bson.M{str: 1}}
 		err = c.UpdateId(upd.Id, change)
