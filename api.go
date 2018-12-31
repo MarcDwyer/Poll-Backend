@@ -80,6 +80,9 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		return
 	case "/api/update":
 		ip := r.Header.Get("X-Forwarded-For")
+		if ip == "" {
+			return
+		}
 		upd := &UpdatePoll{Ip: ip}
 		json.NewDecoder(r.Body).Decode(&upd)
 
@@ -107,15 +110,19 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		if checker.Status == true {
 			return
 		}
-		str := fmt.Sprintf("%v.count", upd.Question)
-		change := bson.M{"$inc": bson.M{str: 1}}
-		err = c.UpdateId(upd.Id, change)
+
+		go func() {
+			str := fmt.Sprintf("%v.count", upd.Question)
+			change := bson.M{"$inc": bson.M{str: 1}}
+			err = c.UpdateId(upd.Id, change)
+			if err != nil {
+				fmt.Println("zone", err)
+			}
+		}()
+		pusher := bson.M{"$push": bson.M{"ip": ip}}
+		err = c.UpdateId(upd.Id, pusher)
 		if err != nil {
 			fmt.Println(err)
 		}
-
-		pusher := bson.M{"$push": bson.M{"ip": ip}}
-		err = c.UpdateId(upd.Id, pusher)
-		return
 	}
 }
