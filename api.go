@@ -3,9 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
-	"strconv"
-	"strings"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -42,7 +41,7 @@ type ReceivedQ struct {
 type UpdatePoll struct {
 	Id       bson.ObjectId `json:"_id"`
 	Question string        `json:"question"`
-	Ip       int
+	Ip       string
 }
 type Ipchecker struct {
 	Status bool `json:"status"`
@@ -81,15 +80,14 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		w.Write(result)
 		return
 	case "/api/update":
-		s := strings.Split(r.RemoteAddr, ":")
-		ip := strings.Replace(s[0], ".", "", -1)
-		i, _ := strconv.Atoi(ip)
 
-		upd := &UpdatePoll{Ip: i}
+		ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+
+		upd := &UpdatePoll{Ip: ip}
 		json.NewDecoder(r.Body).Decode(&upd)
 
 		var ips struct {
-			Ip []int `bson:"ip"`
+			Ip []string `bson:"ip"`
 		}
 		err := c.FindId(upd.Id).Select(bson.M{"ip": 1}).One(&ips)
 
@@ -99,7 +97,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		go func() {
 			defer close(ch)
 			for _, v := range ips.Ip {
-				if v == i {
+				if v == ip {
 					ch <- true
 					break
 				}
@@ -119,7 +117,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
-		pusher := bson.M{"$push": bson.M{"ip": i}}
+		pusher := bson.M{"$push": bson.M{"ip": ip}}
 		err = c.UpdateId(upd.Id, pusher)
 		return
 	}
