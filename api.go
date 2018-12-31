@@ -80,7 +80,6 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		return
 	case "/api/update":
 		ip := r.Header.Get("X-Forwarded-For")
-
 		upd := &UpdatePoll{Ip: ip}
 		json.NewDecoder(r.Body).Decode(&upd)
 
