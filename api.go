@@ -96,7 +96,7 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		err := c.FindId(upd.Id).Select(bson.M{"ip": 1}).One(&ips)
 
 		checker := Ipchecker{}
-
+		fmt.Println(upd)
 		ch := make(chan bool)
 		go func() {
 			defer close(ch)
@@ -115,7 +115,6 @@ func Api(w http.ResponseWriter, r *http.Request) {
 		if checker.Status {
 			return
 		}
-
 		go func() {
 			str := fmt.Sprintf("%v.count", upd.Question)
 			change := bson.M{"$inc": bson.M{str: 1}}

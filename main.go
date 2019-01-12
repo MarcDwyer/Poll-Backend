@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 var mkey string
@@ -18,10 +18,10 @@ var reSecret string
 func init() {
 	fmt.Println(runtime.NumCPU())
 	ky := &mkey
-	//	err := godotenv.Load()
-	//	if err != nil {
-	///		log.Fatal("Error loading .env file")
-	//}
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
 	reSite, reSecret = os.Getenv("RESITE"), os.Getenv("RESECRET")
 }
@@ -30,21 +30,24 @@ func main() {
 	fmt.Println("server running...")
 	hub := newHub()
 	go hub.run()
-	router := mux.NewRouter()
-	router.HandleFunc("/api/create", Api)
-	router.HandleFunc("/api/getpoll", Api)
-	router.HandleFunc("/api/update", Api)
-	router.HandleFunc("/auth", Auth)
-	router.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
+
+	http.HandleFunc("/api/create", Api)
+	http.HandleFunc("/api/getpoll", Api)
+	http.HandleFunc("/api/update", Api)
+	http.HandleFunc("/auth", Auth)
+	http.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
 		Socketme(hub, w, r)
 	})
 
-	poll := router.PathPrefix("/poll/").Subrouter()
-	poll.HandleFunc("/{rest:.*}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/manifest.json" || r.URL.Path == "/favicon.png" {
+			str := fmt.Sprintf("./public/build/%v", r.URL.Path)
+			http.ServeFile(w, r, str)
+			return
+		}
 		http.ServeFile(w, r, "./public/build/index.html")
 	})
 
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./public/build"))))
 	prt := fmt.Sprintf(":%v", port)
-	log.Fatal(http.ListenAndServe(prt, router))
+	log.Fatal(http.ListenAndServe(prt, nil))
 }
