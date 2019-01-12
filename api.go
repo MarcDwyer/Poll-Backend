@@ -108,7 +108,6 @@ func Api(w http.ResponseWriter, r *http.Request) {
 			}
 		}()
 		checker.Status = <-ch
-		fmt.Println(checker)
 		rz, _ := json.Marshal(checker)
 		w.Write(rz)
 

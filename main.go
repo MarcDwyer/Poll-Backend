@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+
+	"github.com/joho/godotenv"
 )
 
 var mkey string
@@ -16,10 +18,10 @@ var reSecret string
 func init() {
 	fmt.Println(runtime.NumCPU())
 	ky := &mkey
-	//	err := godotenv.Load()
-	//	if err != nil {
-	//		log.Fatal("Error loading .env file")
-	//	}
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	*ky, port = os.Getenv("MONGODB"), os.Getenv("PORT")
 	reSite, reSecret = os.Getenv("RESITE"), os.Getenv("RESECRET")
 }
@@ -33,7 +35,7 @@ func main() {
 	http.HandleFunc("/api/getpoll", Api)
 	http.HandleFunc("/api/update", Api)
 	http.HandleFunc("/auth", Auth)
-	http.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/sockets", func(w http.ResponseWriter, r *http.Request) {
 		Socketme(hub, w, r)
 	})
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./public/build/static/"))))
