@@ -36,6 +36,7 @@ func main() {
 	http.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
 		Socketme(hub, w, r)
 	})
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./public/build/static/"))))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/manifest.json" || r.URL.Path == "/favicon.png" {
